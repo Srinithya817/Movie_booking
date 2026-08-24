@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Payment — BookMyMovie{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen pb-20">
+  <div class="bg-gray-900 bg-opacity-80 border border-gray-700 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+    <h2 class="text-2xl font-bold text-center mb-6">💳 Complete Payment</h2>
+    <div class="bg-gray-800 rounded-xl p-4 mb-6 space-y-2 text-sm">
+      <div class="flex justify-between"><span class="text-gray-400">Movie</span><span class="font-medium">{{ movie_title }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-400">Theatre</span><span>{{ show.theatre_name }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-400">Show Time</span><span>{{ show.show_time }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-400">Seats</span><span>{{ seats }}</span></div>
+      <div class="border-t border-gray-700 pt-2 flex justify-between text-base">
+        <span class="text-gray-300 font-medium">Total Amount</span>
+        <span class="text-green-400 font-bold text-lg">₹{{ price }}</span>
+      </div>
+    </div>
+
+    <p class="text-gray-400 text-sm text-center mb-3">Scan to Pay</p>
+    <div class="bg-white rounded-xl p-4 flex justify-center mb-6">
+      <img src="{{ url_for('static', filename='images/qr.jpg') }}" alt="QR Code" 
+           class="w-64 h-64 object-contain rounded-lg">
+    </div>
+
+    <form method="POST" action="{{ url_for('confirm_payment') }}">
+      <input type="hidden" name="name" value="{{ name }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      <input type="hidden" name="seats" value="{{ seats }}">
+      <input type="hidden" name="price" value="{{ price }}">
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl transition">
+        ✅ I Have Paid — Confirm Booking
+      </button>
+    </form>
+    <p class="text-gray-500 text-xs text-center mt-3">After paying, click confirm to get your ticket QR code</p>
+  </div>
+</div>
+{% endblock %}

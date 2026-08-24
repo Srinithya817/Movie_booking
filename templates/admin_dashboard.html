@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — BookMyMovie{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold">⚙️ Admin Dashboard</h1>
+    <a href="{{ url_for('admin_logout') }}" class="text-gray-400 hover:text-white text-sm">Logout</a>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="bg-gray-900 border border-gray-700 rounded-xl p-5 text-center">
+      <p class="text-3xl font-bold text-red-400">{{ total_bookings }}</p>
+      <p class="text-gray-400 text-sm mt-1">Total Bookings</p>
+    </div>
+    <div class="bg-gray-900 border border-gray-700 rounded-xl p-5 text-center">
+      <p class="text-3xl font-bold text-green-400">₹{{ revenue }}</p>
+      <p class="text-gray-400 text-sm mt-1">Total Revenue</p>
+    </div>
+    <div class="bg-gray-900 border border-gray-700 rounded-xl p-5 text-center">
+      <p class="text-3xl font-bold text-blue-400">{{ total_users }}</p>
+      <p class="text-gray-400 text-sm mt-1">Registered Users</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-gray-900 border border-gray-700 rounded-xl p-5">
+      <h2 class="font-semibold mb-4 text-yellow-300">➕ Add New Movie</h2>
+      <form method="POST" action="{{ url_for('add_movie') }}" class="space-y-3">
+        <input type="text" name="title" placeholder="Movie Title" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+        <textarea name="description" placeholder="Description" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none h-20 resize-none"></textarea>
+        <input type="text" name="stars" placeholder="Stars" required class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" name="language" placeholder="Language" required class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+          <input type="text" name="genre" placeholder="Genre" required class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="number" name="rating" placeholder="Rating (e.g. 8.5)" step="0.1" min="0" max="10" required class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+          <input type="text" name="duration" placeholder="Duration (e.g. 2h 30m)" required class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+        </div>
+        <button type="submit" class="w-full btn-red rounded-lg py-2 text-sm font-semibold">Add Movie</button>
+      </form>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-700 rounded-xl p-5">
+      <h2 class="font-semibold mb-4 text-yellow-300">📋 Recent Bookings</h2>
+      <div class="space-y-2 max-h-80 overflow-y-auto">
+        {% for b in bookings %}
+        <div class="bg-gray-800 rounded-lg px-3 py-2 text-sm flex justify-between">
+          <div>
+            <span class="font-medium">{{ b.Movie_Title }}</span>
+            <span class="text-gray-400 ml-2 text-xs">{{ b.F_Name or 'Guest' }}</span>
+          </div>
+          <span class="text-green-400">₹{{ b.Total_Price }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

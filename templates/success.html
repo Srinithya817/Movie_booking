@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed — BookMyMovie{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-10 max-w-2xl">
+  <div class="bg-gray-900 bg-opacity-80 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
+    <div class="bg-gradient-to-r from-green-700 to-green-600 p-6 text-center">
+      <div class="text-5xl mb-2">🎉</div>
+      <h2 class="text-2xl font-bold">Booking Confirmed!</h2>
+      <p class="text-green-200 text-sm mt-1">Hey {{ user_name }}, your ticket is ready!</p>
+    </div>
+
+    <div class="p-6">
+      <div class="flex gap-5 mb-6 flex-wrap">
+        {% set image_map = {'Leo':'leo.jpg','Pushpa 2':'pushpa2.jpg','Jawan':'jawan.jpg','Kalki 2898 AD':'kalki.jpg','Vikram':'vikram.jpg'} %}
+        <img src="{{ url_for('static', filename='images/' ~ image_map.get(movie_title, 'leo.jpg')) }}"
+             alt="{{ movie_title }}"
+             class="w-28 h-40 object-cover rounded-xl shadow-lg flex-shrink-0">
+        <div class="flex-1 space-y-2 text-sm">
+          <h3 class="text-xl font-bold text-yellow-400 mb-3">{{ movie_title }}</h3>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">🎭 Theatre</span><span>{{ theatre_name }}</span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">⏰ Show Time</span><span>{{ show_time }}</span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">💺 Seats</span><span class="font-medium">{{ seats }}</span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">💰 Amount</span><span class="text-green-400 font-bold">₹{{ price }}</span>
+          </div>
+          <div class="flex justify-between pt-1">
+            <span class="text-gray-400">📋 Booking Ref</span>
+            <span class="font-mono font-bold text-yellow-300">{{ booking_ref }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center border-t border-gray-700 pt-6">
+        <p class="text-yellow-400 font-semibold mb-3">🎟️ Your Entry QR Code</p>
+        <div class="bg-white p-3 rounded-xl inline-block mb-3">
+          <img src="{{ url_for('static', filename='images/' ~ qr_path) }}" alt="QR Code" class="w-40 h-40">
+        </div>
+        <p class="text-gray-400 text-xs">Show this QR code at the theatre entrance</p>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <a href="{{ url_for('index') }}" class="flex-1 text-center bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-medium transition">🏠 Home</a>
+        <a href="{{ url_for('my_bookings') }}" class="flex-1 text-center btn-red rounded-xl py-3 font-medium">📋 My Bookings</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

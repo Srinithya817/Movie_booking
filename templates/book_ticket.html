@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Book Seats — BookMyMovie{% endblock %}
+{% block extra_css %}
+<style>
+  .seat { width: 36px; height: 36px; margin: 3px; border-radius: 6px; background: #374151; cursor: pointer; transition: all 0.15s; border: none; }
+  .seat:hover:not(.occupied) { background: #4ade80; transform: scale(1.1); }
+  .seat.selected { background: #22c55e; }
+  .seat.occupied { background: #6b7280; cursor: not-allowed; opacity: 0.5; }
+  .seat.premium { background: #7c3aed; }
+  .seat.premium:hover:not(.occupied) { background: #a78bfa; }
+  .seat.premium.selected { background: #8b5cf6; }
+  .screen { background: linear-gradient(180deg, #fff 0%, #e5e7eb 100%); height: 10px; width: 70%; margin: 0 auto 30px; border-radius: 4px; box-shadow: 0 4px 20px rgba(255,255,255,0.4); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+  <a href="javascript:history.back()" class="text-gray-400 hover:text-white text-sm mb-4 inline-block">← Back</a>
+  <h1 class="text-2xl font-bold mb-1">🎟️ Select Your Seats</h1>
+  <p class="text-gray-400 text-sm mb-6">{{ show.Theatre_Name }} — {{ show.City }} | {{ show.Formatted_Time }}</p>
+
+  <div class="bg-gray-900 bg-opacity-60 border border-gray-700 rounded-2xl p-6 mb-6">
+    <p class="text-center text-gray-400 text-xs mb-3 tracking-widest">SCREEN THIS WAY</p>
+    <div class="screen mb-6"></div>
+
+    <div id="seat-layout" class="flex flex-col items-center gap-1 mb-4">
+      {% set booked_list = booked_seats %}
+      {% for row in range(7) %}
+      <div class="flex items-center gap-1">
+        <span class="text-gray-500 text-xs w-5">{{ ['A','B','C','D','E','F','G'][row] }}</span>
+        {% for col in range(10) %}
+          {% set seat_id = ['A','B','C','D','E','F','G'][row] ~ (col+1) %}
+          {% set is_premium = row < 2 %}
+          {% set is_booked = seat_id in booked_list %}
+          <button class="seat {% if is_premium %}premium{% endif %} {% if is_booked %}occupied{% endif %}"
+                  data-seat="{{ seat_id }}"
+                  data-price="{{ 200 if is_premium else 150 }}"
+                  {% if is_booked %}disabled{% endif %}>
+          </button>
+        {% endfor %}
+        <span class="text-gray-500 text-xs w-5">{{ ['A','B','C','D','E','F','G'][row] }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="flex justify-center gap-6 text-xs text-gray-400 mt-4">
+      <span><span class="inline-block w-4 h-4 rounded bg-gray-600 mr-1"></span>Available</span>
+      <span><span class="inline-block w-4 h-4 rounded bg-green-500 mr-1"></span>Selected</span>
+      <span><span class="inline-block w-4 h-4 rounded bg-purple-600 mr-1"></span>Premium (₹200)</span>
+      <span><span class="inline-block w-4 h-4 rounded bg-gray-500 opacity-50 mr-1"></span>Booked</span>
+    </div>
+  </div>
+
+  <div class="bg-gray-900 bg-opacity-60 border border-gray-700 rounded-2xl p-6">
+    <div class="flex justify-between mb-4">
+      <span class="text-gray-300">Selected: <span id="selected-count" class="text-white font-bold">0</span> seat(s)</span>
+      <span class="text-gray-300">Total: ₹<span id="total-price" class="text-green-400 font-bold text-lg">0</span></span>
+    </div>
+    <form id="booking-form" method="POST" action="{{ url_for('book_show') }}">
+      <input type="hidden" name="selected_seats" id="selected-seats-input">
+      <input type="hidden" name="total_price" id="total-price-input">
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <input type="text" name="name" placeholder="Full Name" required
+          value="{{ session.get('user_name', '') }}"
+          class="bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500">
+        <input type="email" name="email" placeholder="Email" required
+          value="{{ session.get('user_email', '') }}"
+          class="bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500">
+      </div>
+      <button type="submit" id="submit-btn"
+        class="w-full btn-red rounded-xl py-3 font-semibold opacity-50 cursor-not-allowed" disabled>
+        Proceed to Payment →
+      </button>
+    </form>
+  </div>
+</div>
+<script>
+const seats = document.querySelectorAll('.seat:not(.occupied)');
+let selectedSeats = [];
+seats.forEach(seat => {
+  seat.addEventListener('click', () => {
+    seat.classList.toggle('selected');
+    const id = seat.dataset.seat;
+    if (selectedSeats.includes(id)) selectedSeats = selectedSeats.filter(s => s !== id);
+    else selectedSeats.push(id);
+    const total = selectedSeats.reduce((sum, sid) => {
+      const el = document.querySelector(`.seat[data-seat="${sid}"]`);
+      return sum + parseInt(el.dataset.price);
+    }, 0);
+    document.getElementById('selected-count').textContent = selectedSeats.length;
+    document.getElementById('total-price').textContent = total;
+    document.getElementById('selected-seats-input').value = selectedSeats.join(',');
+    document.getElementById('total-price-input').value = total;
+    const btn = document.getElementById('submit-btn');
+    if (selectedSeats.length > 0) {
+      btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+      btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+  });
+});
+</script>
+{% endblock %}

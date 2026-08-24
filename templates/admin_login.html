@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — BookMyMovie{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen pb-20">
+  <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 w-full max-w-sm shadow-2xl">
+    <h2 class="text-xl font-bold text-center mb-6">🔐 Admin Access</h2>
+    <form method="POST">
+      <input type="password" name="password" placeholder="Admin Password" required
+        class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white mb-4 focus:outline-none focus:border-red-500">
+      <button type="submit" class="w-full btn-red rounded-lg py-3 font-semibold">Enter Dashboard</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

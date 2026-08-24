@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.Movie_Title }} — BookMyMovie{% endblock %}
+{% block extra_css %}
+<style>
+  .show-option { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 16px; cursor: pointer; transition: all 0.2s; }
+  .show-option:hover { background: rgba(229,9,20,0.2); border-color: #E50914; }
+  .show-option.selected { background: rgba(229,9,20,0.3); border-color: #E50914; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+  <a href="{{ url_for('index') }}" class="text-gray-400 hover:text-white text-sm mb-6 inline-block">← Back to Movies</a>
+  <div class="flex flex-col lg:flex-row gap-10 bg-gray-900 bg-opacity-60 border border-gray-700 rounded-2xl p-8">
+    <img src="{{ url_for('static', filename='images/' ~ image_map.get(movie.Movie_Title, 'leo.jpg')) }}"
+         alt="{{ movie.Movie_Title }}"
+         class="w-full lg:w-72 h-96 object-cover rounded-xl shadow-2xl flex-shrink-0">
+    <div class="flex-1">
+      <div class="flex items-start justify-between flex-wrap gap-3 mb-4">
+        <h1 class="text-3xl font-bold text-red-400">{{ movie.Movie_Title }}</h1>
+        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold">★ {{ movie.Rating }}</span>
+      </div>
+      <div class="flex flex-wrap gap-3 mb-4 text-sm text-gray-300">
+        <span>🎭 {{ movie.Movie_Stars }}</span>
+        <span>•</span>
+        <span>🗣️ {{ movie.Language }}</span>
+        <span>•</span>
+        <span>🎬 {{ movie.Genre }}</span>
+        <span>•</span>
+        <span>⏱ {{ movie.Duration }}</span>
+      </div>
+      <p class="text-gray-300 leading-relaxed mb-6">{{ movie.Movie_Description }}</p>
+
+      <h3 class="text-lg font-semibold mb-3">🎥 Select Show</h3>
+      <div class="space-y-2 mb-6">
+        {% for show in shows %}
+        <div class="show-option" onclick="selectShow({{ show.Show_Id }}, this)">
+          <span class="font-medium">{{ show.Theatre_Name }}</span>
+          <span class="text-gray-400 text-sm"> — {{ show.City }}</span>
+          <span class="float-right text-yellow-400 text-sm font-medium">{{ show.Formatted_Time }}</span>
+        </div>
+        {% endfor %}
+      </div>
+
+      <form method="GET" action="{{ url_for('book_show') }}" id="bookingForm">
+        <input type="hidden" name="show_id" id="selectedShowId">
+        <button type="submit" id="bookButton" disabled
+          class="btn-red rounded-xl py-3 px-8 text-base font-semibold opacity-50 cursor-not-allowed transition-all">
+          🎟️ Select a Show First
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+function selectShow(showId, el) {
+  document.getElementById('selectedShowId').value = showId;
+  const btn = document.getElementById('bookButton');
+  btn.disabled = false;
+  btn.textContent = '🎟️ Book Ticket';
+  btn.classList.remove('opacity-50', 'cursor-not-allowed');
+  document.querySelectorAll('.show-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+{% endblock %}

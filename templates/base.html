@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BookMyMovie{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; }
+    .navbar { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-brand { font-size: 1.4rem; font-weight: 700; color: #E50914; letter-spacing: 1px; }
+    .nav-link { color: #ccc; transition: color 0.2s; font-size: 0.9rem; }
+    .nav-link:hover { color: #fff; }
+    .btn-red { background: #E50914; color: white; padding: 8px 20px; border-radius: 8px; font-weight: 600; transition: all 0.2s; }
+    .btn-red:hover { background: #b00610; transform: translateY(-1px); }
+    .flash-success { background: #065f46; border-left: 4px solid #10b981; color: #d1fae5; }
+    .flash-danger { background: #7f1d1d; border-left: 4px solid #ef4444; color: #fee2e2; }
+    .flash-warning { background: #78350f; border-left: 4px solid #f59e0b; color: #fef3c7; }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="text-white">
+
+  <nav class="navbar px-6 py-4 flex items-center justify-between">
+    <a href="{{ url_for('index') }}" class="nav-brand">🎬 BookMyMovie</a>
+    <div class="flex items-center gap-6">
+      <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('my_bookings') }}" class="nav-link">My Bookings</a>
+        <span class="text-yellow-400 text-sm font-medium">👤 {{ session.get('user_name') }}</span>
+        <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+        <a href="{{ url_for('register') }}" class="btn-red">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <div class="container mx-auto px-4 py-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-{{ category }} px-4 py-3 rounded-lg mb-4 text-sm">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  {% block content %}{% endblock %}
+
+</body>
+</html>
